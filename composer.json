@@ -1,0 +1,14 @@
+{
+    "name": "leocavalcante/php-algebraic-effects",
+    "description": "PoC of Algebraic Effects in PHP programming language",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "leocavalcante",
+            "email": "lc@leocavalcante.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
