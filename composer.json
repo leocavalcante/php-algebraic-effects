@@ -9,6 +9,14 @@
             "email": "lc@leocavalcante.com"
         }
     ],
-    "minimum-stability": "dev",
-    "require": {}
+    "minimum-stability": "stable",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Effect\\": "src/"
+        }
+    },
+    "require-dev": {
+        "vimeo/psalm": "^3.9"
+    }
 }
