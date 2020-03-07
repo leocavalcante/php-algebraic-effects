@@ -2,8 +2,9 @@
 
 namespace App;
 
+use Effect\Affect;
 use Effect\Effect;
-use Effect\System;
+use Effect\EffectHandler;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -27,29 +28,42 @@ class Log implements Effect
     }
 }
 
-$handler = function (Effect $effect) {
-    if ($effect instanceof ReadDir) {
-        return scandir($effect->dir);
+class ScanDir implements EffectHandler
+{
+    public function handle(Effect $effect)
+    {
+        if ($effect instanceof ReadDir) {
+            return scandir($effect->dir);
+        }
     }
+}
 
-    if ($effect instanceof Log) {
-        echo $effect->message, PHP_EOL;
+class EchoLog implements EffectHandler
+{
+    public function handle(Effect $effect)
+    {
+        if ($effect instanceof Log) {
+            echo $effect->message;
+        }
     }
-};
+}
 
-$enumerate_files = (new System($handler))->affect(function (System $system) {
-    return function (string $dir) use ($system) {
-        $system->effect(new Log("Reading $dir"));
+class EnumerateFiles extends Affect
+{
+    public function __invoke(string $dir): array
+    {
+        $this->perform(new Log("Reading $dir"));
 
-        $contents = $system->effect(new ReadDir($dir));
+        $contents = $this->perform(new ReadDir($dir));
 
         $len = sizeof($contents);
 
-        $system->effect(new Log("Found $len items"));
+        $this->perform(new Log("Found $len items"));
 
         return $contents;
-    };
-});
+    }
+}
 
+$handlers = [new ScanDir(), new EchoLog()];
+$enumerate_files = new EnumerateFiles($handlers);
 print_r($enumerate_files(__DIR__));
-
